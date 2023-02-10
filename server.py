@@ -5,6 +5,7 @@ from flask import Flask, redirect, request
 from lxml import etree, html
 import os
 import re
+import sys
 from typing import ClassVar
 
 LOGGING = False
@@ -942,12 +943,12 @@ class RParenToken(Token):
     pass
 
 if __name__ == '__main__':
-    LOGGING = True
+    LOGGING = '--logging' in sys.argv
 
     # expr = AttrExpression.new_parse('3 + (2 - %x/y)')
     # log(expr.eval({ 'x': 2 }))
  
-    server = Server('./test')
+    server = Server('./site')
     @app.route('/', defaults={'path': ''}, methods=['GET', 'POST'])
     @app.route('/<path:path>', methods=['GET', 'POST'])
     def main(path):
@@ -983,7 +984,3 @@ if __name__ == '__main__':
         return 'bad request', 400
     
     app.run()
-
-
-
-    # print(server.handle_request('post', 'xml', 'quux/bar', ''))
