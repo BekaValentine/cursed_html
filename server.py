@@ -369,6 +369,9 @@ class Server:
                 tree.append(child)
 
     def process_normal(self, method, response_info, bindings, tree):
+        if not etree.iselement(tree) or tree.tag is etree.Comment:
+            return tree
+        
         new_tree = etree.Element(tree.tag)
         new_tree.text = tree.text
         new_tree.tail = tree.tail
