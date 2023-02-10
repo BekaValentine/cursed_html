@@ -1,0 +1,5 @@
+<feed>
+    <for var="post_id" in="post">
+        <include src="post/%post_id/content.xml" />
+    </for>
+</feed>

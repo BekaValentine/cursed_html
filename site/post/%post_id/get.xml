@@ -1,0 +1,9 @@
+<post>
+    <with src="post/%post_id/content.xml">
+        <title><include val="%title" /></title>
+        <content><include val="%content" /></content>
+    </with>
+    <for var="comment_id" in="post/%post_id/comments">
+        <include src="post/%post_id/comments/%comment_id/content.xml" />
+    </for>
+</post>

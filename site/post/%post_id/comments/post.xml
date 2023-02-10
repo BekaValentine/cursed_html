@@ -1,0 +1,6 @@
+<result redirect="/post/%post_id">
+    <comment>
+        <name><include val="%name" /></name>
+        <content><include val="%content" /></content>
+    </comment>
+</result>

@@ -1,0 +1,26 @@
+<with src="post/%post_id/content.xml">
+    <html>
+        <head>
+            <title><include val="%title" /></title>
+        </head>
+        <body>
+            <p><a href="/">home</a></p>
+            <h1><include val="%title" /></h1>
+            <p><include val="%content" /></p>
+            <hr/>
+            <h2>Comments</h2>
+            <form action="/post/%post_id/comments" method="post">
+                <p><input name="name" placeholder="Your name" /></p>
+                <p><textarea name="content" placeholder="Your comment" /></p>
+                <p><input type="Submit" /></p>
+            </form>
+            <ul>
+                <for var="comment_id" in="post/%post_id/comments">
+                    <with src="post/%post_id/comments/%comment_id/content.xml">
+                        <li><em><span><include val="%name" /></span> says...</em> <include val="%content" /></li>
+                    </with>
+                </for>
+            </ul>
+        </body>
+    </html>
+</with>

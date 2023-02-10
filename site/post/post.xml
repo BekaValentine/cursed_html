@@ -1,0 +1,4 @@
+<post>
+    <title><include val="%title" /></title>
+    <content><include val="%content" /></content>
+</post>

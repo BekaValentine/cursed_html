@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>My Awesome Blog</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <h1>My Awesome Blog</h1>
+        <hr/>
+
+        <h2>New Post</h2>
+        <form method="post" action="/post">
+            <p><input name="title" placeholder="Title"/></p>
+            <p><textarea name="content" placeholder="Content"></textarea></p>
+            <p><input type="submit" /></p>
+        </form>
+
+        <let var="post_ids" in="post">
+            <if test="%post_ids">
+                <hr/>
+
+                <h2>Posts</h2>
+                <ul>
+                    <for var="post_id" in="post">
+                        <let var="post" src="post/%post_id/content.xml">
+                            <li>
+                                <p><a href="/post/%post_id"><em><include val="%post/title" /></em></a></p>
+                                <p><include val="%post/content" /></p>
+                            </li>
+                        </let>
+                    </for>
+                </ul>
+            </if>
+        </let>
+   
+    </body>
+</html>
