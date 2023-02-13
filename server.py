@@ -3,6 +3,7 @@ import copy
 from dataclasses import dataclass
 from flask import Flask, redirect, request
 from lxml import etree, html
+import markdown
 import os
 import re
 import sys
@@ -73,13 +74,24 @@ class Server:
                     return f.read()
         log('TESTING 2')
 
-        if content_type == 'both':
+        if content_type == 'all':
             content_type = 'html'
             res = server.resolve_path(f'{method}.html', server.root_dir, request_path.split('/'))
+
+            if res is None:
+                content_type = 'md'
+                res = server.resolve_path(f'{method}.md', server.root_dir, request_path.split('/'))
+
             if res is None:
                 content_type = 'xml'
                 res = server.resolve_path(f'{method}.xml', server.root_dir, request_path.split('/'))
-        elif content_type in ['html', 'xml']:
+        elif content_type == 'html':
+            res = server.resolve_path(f'{method}.{content_type}', server.root_dir, request_path.split('/'))
+            if res is None:
+                res = server.resolve_path(f'{method}.md', server.root_dir, request_path.split('/'))
+                if res is not None:
+                    content_type = 'md'
+        elif content_type in [ 'xml']:
             res = server.resolve_path(f'{method}.{content_type}', server.root_dir, request_path.split('/'))
         else:
             return None
@@ -90,7 +102,8 @@ class Server:
         handler_path, bindings = res
         log(f'Found handler path: {handler_path} with bindings: {bindings}')
         with open(handler_path, 'r') as f:
-            handler = etree.fromstring(f.read())
+            handler_source = f.read()
+
         bindings['method'] = method
         bindings['content_type'] = content_type
         bindings['handler_path'] = handler_path[len(server.root_dir)+1:]
@@ -105,7 +118,15 @@ class Server:
             
             bindings = { **bindings, **request_params }
 
-            result = server.process_tree(method, response_info, bindings, handler)
+            if content_type in ['html', 'xml']:
+                result = server.process_tree(method, response_info, bindings, etree.fromstring(handler_source))
+            elif content_type == 'md':
+                content_type = 'html'
+                html_handler = markdown.markdown(handler_source)
+                html_handler = f'<html>{html_handler}</html>'
+                result = server.process_tree(method, response_info, bindings, etree.fromstring(html_handler))
+            else:
+                return None
             
             if result is None:
                 return None
@@ -966,7 +987,7 @@ if __name__ == '__main__':
             elif 'application/xaml+xml' in request.accept_mimetypes:
                 content_type = 'xml'
             else:
-                content_type = 'both'
+                content_type = 'all'
         elif method == 'post':
             content_type = 'xml'
         
